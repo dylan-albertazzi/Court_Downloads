@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "docker_scraper.py", line 1, in <module>
+    import scraper as scraper
+  File "/Users/dylanalbertazzi/Desktop/Court-Download/scraper.py", line 107, in <module>
+    runscript()
+  File "/Users/dylanalbertazzi/Desktop/Court-Download/scraper.py", line 98, in runscript
+    with open(desired_date , 'w') as f:
+FileNotFoundError: [Errno 2] No such file or directory: '11/27/2019'
