@@ -99,10 +99,10 @@ def runscript():
                 i += 1
 
             d_date = datetime.strftime(datetime.now() - timedelta(1), '%m_%d_%Y')
-            csv_name = "/Users/dylanalbertazzi/Documents/Clients_SEO/ALF_Folder/Court-Download/case_logs/" + d_date + '.csv'
+            csv_name = "/Users/dylanalbertazzi/Documents/Clients_SEO/ALF_Folder/Court-Download/case_logs/" + d_date + 'Deschutes''.csv'
             with open(csv_name , 'w') as w:
                 w = csv.writer(w)
-                w.writerow(["Link","Case Number", "Description", "Filed Date", "Type"])
+                w.writerow(["Link","CaseNumber", "Description", "FiledDate", "Type"])
                 w.writerows(table_data)
         else:
             print("no cases")
