@@ -6,6 +6,16 @@ from datetime import datetime, timedelta
 import requests
 import numpy as np
 import csv
+import pyodbc
+
+server_name = "tcp:lawdata.database.windows.net,1433"
+db_name = "CourtData"
+
+conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=server_name;'
+                      'Database=db_name;'
+                      'Trusted_Connection=yes;')
+
 
 desired_date = datetime.strftime(datetime.now() - timedelta(1), '%m_%d_%Y')
 csv_name = desired_date + '.csv'
