@@ -1,24 +1,30 @@
-import mysql.connector
-from mysql.connector import errorcode
+# import mysql.connector
+# from mysql.connector import errorcode
+import datetime
+from datetime import datetime as dt
+from datetime import timezone
 
-# Obtain connection string information from the portal
-config = {
-  'host':'tcp:lawdata.mysql.database.windows.net,1433',
-  'user':'dylan@albertazzilaw.com',
-  'password':'RadTad234',
-  'database':'CourtData'
-}
+import pyodbc
+server = 'lawdata.database.windows.net,1433'
+database = 'CourtData'
+username = 'dylan@albertazzilaw.com'
+password = 'Radtad234'
+driver= '{ODBC Driver 17 for SQL Server}'
+auth= 'ActiveDirectoryPassword'
+cnxn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password+';Authentication='+auth+';')
+cursor = cnxn.cursor()
 
-# Construct connection string
-try:
-   conn = mysql.connector.connect(**config)
-   print("Connection established")
-except mysql.connector.Error as err:
-  if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-    print("Something is wrong with the user name or password")
-  elif err.errno == errorcode.ER_BAD_DB_ERROR:
-    print("Database does not exist")
-  else:
-    print(err)
-else:
-  cursor = conn.cursor()
+cursor.execute("""
+select * from DocketRecords
+""")
+
+
+
+rows = cursor.fetchall()
+with cnxn:
+  cursor.execute("""
+  insert into DocketRecords(CaseNo, Description, FileDate, County, CaseType, CreateDateUtc, CourtCaseId) values (?,?,?,?,?,?,?)""", '101','test', datetime.date(2019,12,3),'test','test', dt.now(timezone.utc),'3433')
+  cnxn.commit()
+
+
+#Insert row code completed, now implement into scraper code

@@ -12,6 +12,10 @@ import csv
 import pyodbc
 import socket
 import os
+from datetime import datetime as dt
+from datetime import timezone, date, timedelta
+from numpy import genfromtxt
+
 
 def is_connected():
     try:
@@ -107,25 +111,47 @@ def runscript(desired_date):
             link = link.get('href')
             #print(link)
             #populate numpy array
-            table_data[i, 0] = link
-            table_data[i, 1] = tds[0].text #Case Number
-            table_data[i, 2] = tds[1].text.replace('\n', ' ') #Description
-            table_data[i, 3] = tds[2].contents[0].text #Filed date
-            table_data[i, 4] = tds[3].contents[0].text #Type
+            table_data[i, 0] = link.strip() 
+            table_data[i, 1] = tds[0].text.strip() #Case Number
+            table_data[i, 2] = tds[1].text.strip()  #Description
+            table_data[i, 3] = tds[2].contents[0].text.strip()  #Filed date
+            table_data[i, 4] = tds[3].contents[0].text.strip()  #Type
             table_data[i, 5] = "Deschutes" #add to be other counties too
         
             i += 1
 
         d_date = datetime.strftime(datetime.now() - timedelta(1), '%m_%d_%Y')
-        csv_name = "/Users/dylanalbertazzi/Documents/Clients_SEO/ALF_Folder/Court-Download/case_logs/" + d_date + 'Deschutes''.csv' #add county name to name
-        with open(csv_name , 'w') as w:
-            w = csv.writer(w)
-            w.writerow(["Link","CaseNo", "Description", "FileDate", "County", "CaseType"])
-            w.writerows(table_data)
+        d_date2 = date.today() - timedelta(days=1)
+        # csv_name = "/Users/dylanalbertazzi/Documents/Clients_SEO/ALF_Folder/Court-Download/case_logs/" + d_date + 'Deschutes''.csv' #add county name to name
+        # with open(csv_name , 'w') as w:
+        #     w = csv.writer(w)
+        #     w.writerow(["Link","CaseNo", "Description", "FileDate", "County", "CaseType"])
+        #     w.writerows(table_data)
+        
+        #Upload to server.
+        
+        # my_data = genfromtxt(csv_name, delimiter=',', dtype=None)
+        server = 'lawdata.database.windows.net,1433'
+        database = 'CourtData'
+        username = 'dylan@albertazzilaw.com'
+        password = 'Radtad234'
+        driver= '{ODBC Driver 17 for SQL Server}'
+        auth= 'ActiveDirectoryPassword'
+        cnxn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password+';Authentication='+auth+';')
+        cursor = cnxn.cursor()
+
+        
+        
+        for case in table_data:
+            
+            with cnxn:
+                cursor.execute("""
+                insert into DocketRecords(CaseNo, Description, FileDate, County, CaseType, CreateDateUtc, CourtCaseId) values (?,?,?,?,?,?,?)""", case[1],case[2], d_date2 ,case[5],case[4], dt.now(timezone.utc),case[0])
+                cnxn.commit()
     else:
         print("no cases")
 
-    return
+    
 
 
 def main():
@@ -158,8 +184,7 @@ def main():
                 casesForLater = np.append(casesForLater, desired_date)
                 np.save("cases_to_collect.npy", casesForLater)
             else:
-                np.save("cases_to_collect", desired_date)
-           
+                np.save("cases_to_collect.npy", desired_date)
 
 
 
