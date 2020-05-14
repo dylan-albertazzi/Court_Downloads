@@ -2,6 +2,7 @@
 #This program extracts new cases off of the Oregon court file website and saves them to a csv
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 import time
@@ -49,9 +50,11 @@ def runscript(desired_date):
     
     options.binary_location = "/usr/bin/chromium"
     
-    driver = webdriver.Chrome(executable_path="/Users/dylanalbertazzi/Documents/Clients_SEO/ALF_Folder/Court-Download/chromedriver", chrome_options=chrome_options)
+    # driver = webdriver.Chrome(executable_path="/Users/dylanalbertazzi/Documents/Clients_SEO/ALF_Folder/Court-Download/chromedriver", chrome_options=chrome_options)
+    
+    driver = webdriver.Chrome(ChromeDriverManager().install())
     driver.get('https://publicaccess.courts.oregon.gov/PublicAccessLogin/Login.aspx?ReturnUrl=/PublicAccessLogin/default.aspx')
-
+    # driver.quit
     ##Navigate to case data
     userID = driver.find_element_by_id("UserName")
     userID.send_keys(username)
