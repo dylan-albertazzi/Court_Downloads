@@ -36,8 +36,8 @@ def runscript(desired_date):
 
     
     county = "Deschutes"
-    username = 'AVADES01'
-    password = "avades01"
+    username = os.getenv('COURT_USER')
+    password = os.getenv('COURT_PASS')
 
     ##Set up Selenium Driver
     chrome_options = Options()
@@ -133,8 +133,8 @@ def runscript(desired_date):
         # my_data = genfromtxt(csv_name, delimiter=',', dtype=None)
         server = 'lawdata.database.windows.net,1433'
         database = 'CourtData'
-        username = 'dylan@albertazzilaw.com'
-        password = 'Radtad234'
+        username = os.getenv('LAW_DB_USER')
+        password = os.getenv('LAW_DB_PASS')
         driver= '{ODBC Driver 17 for SQL Server}'
         auth= 'ActiveDirectoryPassword'
         cnxn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password+';Authentication='+auth+';')
